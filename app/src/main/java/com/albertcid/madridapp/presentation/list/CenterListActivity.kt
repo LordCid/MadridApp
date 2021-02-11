@@ -58,8 +58,8 @@ class CenterListActivity : AppCompatActivity(), CentersListContract.View, Corout
         tabs.addOnTabSelectedListener(object : OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                when(tab.position){
-                   0 -> presenter.getElderlyCenters()
-                   1 -> presenter.getFamilyCenters()
+                   1 -> presenter.getElderlyCenters()
+                   2 -> presenter.getFamilyCenters()
                }
             }
 

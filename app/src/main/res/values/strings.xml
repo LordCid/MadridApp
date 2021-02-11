@@ -21,4 +21,5 @@ Sed enim dolor, pretium quis sem eget, dapibus laoreet enim. Vivamus et nibh non
     <string name="downloading_title_dialog">Descargando</string>
     <string name="elderly_centers">Centros de Mayores</string>
     <string name="familyCenters">Centros Familiares</string>
+    <string name="all_centers">Todos</string>
 </resources>
