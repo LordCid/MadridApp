@@ -10,6 +10,7 @@ import com.albertcid.madridapp.getOtherElderlyCenter
 import com.albertcid.madridapp.getOtherFamilyCenter
 import com.nhaarman.mockitokotlin2.given
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
@@ -24,23 +25,20 @@ class CenterListPresenterTest {
     private val schedulerProvider = mock<SchedulerProvider>()
 
     private val elderlyCenters = listOf(getElderlyCenter(123))
+    private val otherElderlyCenters = listOf(getOtherElderlyCenter(123))
     private val familyCenters = listOf(getFamilyCenter(123))
+    private val otherFamilyCenters = listOf(getOtherFamilyCenter(123))
 
     @Before
     fun setUp() {
         stubScheduleProvider()
-        getSuccessResultsFromUseCase(elderlyCenters, familyCenters)
-        sut = CenterListPresenter(
-            view,
-            getElderlyCentersUseCase,
-            getFamilyCentersUseCase,
-            schedulerProvider
-        )
+
     }
 
     @Test
     fun `Should invoke usecase when get Elderly Centers`() {
-        given(getElderlyCentersUseCase.invoke()).willReturn(Observable.just(emptyList()))
+        getSuccessResultsFromUseCase(emptyList(), emptyList())
+        initSut()
 
         sut.getElderlyCenters()
 
@@ -49,72 +47,15 @@ class CenterListPresenterTest {
 
     @Test
     fun `Should invoke usecase when get Family Centers`() {
-        given(getFamilyCentersUseCase.invoke()).willReturn(Observable.just(emptyList()))
+        getSuccessResultsFromUseCase(emptyList(), emptyList())
+        initSut()
 
         sut.getFamilyCenters()
 
         verify(getFamilyCentersUseCase).invoke()
     }
 
-    @Test
-    fun `Given results when get elderly center list, those are shown in view`() {
-        val results = listOf(getElderlyCenter(123))
-        given(getElderlyCentersUseCase.invoke()).willReturn(Observable.just(results))
 
-        sut.getElderlyCenters()
-
-        verify(view).showCenters(results)
-    }
-
-
-    @Test
-    fun `Given OTHER results when get elderly center list, those are shown in view`() {
-        val results = listOf(getOtherElderlyCenter(245))
-        given(getElderlyCentersUseCase.invoke()).willReturn(Observable.just(results))
-
-        sut.getElderlyCenters()
-
-        verify(view).showCenters(results)
-    }
-
-    @Test
-    fun `Given failure get elderly center list, error is invoked in view`() {
-        given(getElderlyCentersUseCase.invoke()).willReturn(Observable.error(Throwable()))
-
-        sut.getElderlyCenters()
-
-        verify(view).showError()
-    }
-
-    @Test
-    fun `Given results when get family center list, those are shown in view`() {
-        val results = listOf(getFamilyCenter(123))
-        given(getFamilyCentersUseCase.invoke()).willReturn(Observable.just(results))
-
-        sut.getFamilyCenters()
-
-        verify(view).showCenters(results)
-    }
-
-
-    @Test
-    fun `Given OTHER results when get family center list, those are shown in view`() {
-        val results = listOf(getOtherFamilyCenter(245))
-        given(getFamilyCentersUseCase.invoke()).willReturn(Observable.just(results))
-
-        sut.getFamilyCenters()
-
-        verify(view).showCenters(results)
-    }
-
-    @Test
-    fun `Given failure get family center list, error is invoked in view`() {
-        given(getFamilyCentersUseCase.invoke()).willReturn(Observable.error(Throwable()))
-
-        sut.getFamilyCenters()
-
-        verify(view).showError()
-    }
 
     @Test
     fun `Given center results when get all centers, data is shown in view`() {
@@ -122,10 +63,100 @@ class CenterListPresenterTest {
             addAll(elderlyCenters)
             addAll(familyCenters)
         }
+        getSuccessResultsFromUseCase(elderlyCenters, familyCenters)
+        initSut()
+
+
         sut.getAllCenters()
 
         verify(view).showCenters(expected)
     }
+
+    @Test
+    fun `Given only elderly center results, when get all centers, data is shown in view`() {
+        val expected = mutableListOf<Center>().apply {
+            addAll(elderlyCenters)
+            addAll(emptyList())
+        }
+        getSuccessResultsFromUseCase(elderlyCenters, emptyList())
+        initSut()
+
+
+        sut.getAllCenters()
+
+        verify(view).showCenters(expected)
+    }
+
+    @Test
+    fun `Given only family center results, when get all centers, data is shown in view`() {
+        val expected = mutableListOf<Center>().apply {
+            addAll(emptyList())
+            addAll(familyCenters)
+        }
+        getSuccessResultsFromUseCase(emptyList(), familyCenters)
+        initSut()
+
+
+        sut.getAllCenters()
+
+        verify(view).showCenters(expected)
+    }
+
+    @Test
+    fun `Given center results, when get family centers, only  family centers are shown in view`() {
+        getSuccessResultsFromUseCase(elderlyCenters, familyCenters)
+        initSut()
+
+
+        sut.getFamilyCenters()
+
+        verify(view).showCenters(familyCenters)
+    }
+
+
+    @Test
+    fun `Given center results, when get elderly centers, only eldelry centers are shown in view`() {
+        getSuccessResultsFromUseCase(elderlyCenters, familyCenters)
+        initSut()
+
+
+        sut.getElderlyCenters()
+
+        verify(view).showCenters(elderlyCenters)
+    }
+
+    @Test
+    fun `Given failure get elderly center list, error is invoked in view`() {
+        givenErrorWhenGetElderlyCenter(familyCenters)
+        initSut()
+
+        sut.getElderlyCenters()
+
+        verify(view).showCenters(familyCenters)
+        verify(view, never()).showError()
+    }
+
+
+    @Test
+    fun `Given failure get family center list, error is invoked in view`() {
+        givenErrorWhenGetFamilyCenter(elderlyCenters)
+        initSut()
+
+        sut.getFamilyCenters()
+
+        verify(view).showCenters(elderlyCenters)
+        verify(view, never()).showError()
+    }
+
+    private fun initSut() {
+        sut = CenterListPresenter(
+            view,
+            getElderlyCentersUseCase,
+            getFamilyCentersUseCase,
+            schedulerProvider
+        )
+    }
+
 
     private fun getSuccessResultsFromUseCase(
         elderlyCenters: List<Center>,
@@ -133,6 +164,16 @@ class CenterListPresenterTest {
     ) {
         given(getElderlyCentersUseCase.invoke()).willReturn(Observable.just(elderlyCenters))
         given(getFamilyCentersUseCase.invoke()).willReturn(Observable.just(familyCenters))
+    }
+
+    private fun givenErrorWhenGetElderlyCenter(familyCenters: List<Center>) {
+        given(getElderlyCentersUseCase.invoke()).willReturn(Observable.error(Throwable()))
+        given(getFamilyCentersUseCase.invoke()).willReturn(Observable.just(familyCenters))
+    }
+
+    private fun givenErrorWhenGetFamilyCenter(elderlyCenters: List<Center>) {
+        given(getElderlyCentersUseCase.invoke()).willReturn(Observable.just(elderlyCenters))
+        given(getFamilyCentersUseCase.invoke()).willReturn(Observable.error(Throwable()))
     }
 
     private fun stubScheduleProvider(){

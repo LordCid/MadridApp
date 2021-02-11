@@ -1,6 +1,5 @@
 package com.albertcid.madridapp.presentation.list
 
-import android.R.id.tabs
 import android.app.ProgressDialog
 import android.os.Bundle
 import android.view.View
@@ -58,6 +57,7 @@ class CenterListActivity : AppCompatActivity(), CentersListContract.View, Corout
         tabs.addOnTabSelectedListener(object : OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                when(tab.position){
+                   0 -> presenter.getAllCenters()
                    1 -> presenter.getElderlyCenters()
                    2 -> presenter.getFamilyCenters()
                }

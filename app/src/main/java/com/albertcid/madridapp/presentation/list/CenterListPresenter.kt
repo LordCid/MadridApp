@@ -2,6 +2,7 @@ package com.albertcid.madridapp.presentation.list
 
 import com.albertcid.madridapp.domain.SchedulerProvider
 import com.albertcid.madridapp.domain.model.Center
+import com.albertcid.madridapp.domain.model.CenterCategory
 import com.albertcid.madridapp.domain.usecase.GetElderlyCentersUseCase
 import com.albertcid.madridapp.domain.usecase.GetFamilyCentersUseCase
 import io.reactivex.Observable
@@ -17,10 +18,12 @@ class CenterListPresenter @Inject constructor(
 ) : CentersListContract.Presenter {
 
     private val compositeDisposable = CompositeDisposable()
-    private var centerList = emptyList<Center>()
+    private var centerList = mutableListOf<Center>()
 
     init{
         val disposable = Observable.concat(getElderlyCentersUseCase(), getFamilyCentersUseCase())
+            .subscribeOn(schedulerProvider.io())
+            .observeOn(schedulerProvider.ui())
             .subscribe(::onSucess, ::onError)
         compositeDisposable.add(disposable)
     }
@@ -31,19 +34,11 @@ class CenterListPresenter @Inject constructor(
 
 
     override fun getElderlyCenters() {
-        view?.showCenters(centerList)
-//        val disposable = getElderlyCentersUseCase()
-//            .compose(applyObservableAsync())
-//            .subscribe(::onSucess, ::onError)
-//        compositeDisposable.add(disposable)
+        view?.showCenters(centerList.filter { it.category == CenterCategory.ELDER })
     }
 
     override fun getFamilyCenters() {
-        view?.showCenters(centerList)
-//        val disposable = getFamilyCentersUseCase()
-//            .compose(applyObservableAsync())
-//            .subscribe(::onSucess, ::onError)
-//        compositeDisposable.add(disposable)
+        view?.showCenters(centerList.filter { it.category == CenterCategory.FAMILY })
     }
 
     private fun <T> applyObservableAsync(): ObservableTransformer<T, T> {
@@ -55,7 +50,7 @@ class CenterListPresenter @Inject constructor(
     }
 
     private fun onSucess(list: List<Center>) {
-        centerList = list
+        centerList.addAll(list)
     }
 
     private fun onError(throwable: Throwable) {
