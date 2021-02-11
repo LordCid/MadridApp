@@ -11,5 +11,8 @@ data class Center(
     val description: String,
     val schedule: String,
     val services: String,
-    val name: String
+    val name: String,
+    val category: CenterCategory
 )
+
+enum class CenterCategory { ELDER, FAMILY }

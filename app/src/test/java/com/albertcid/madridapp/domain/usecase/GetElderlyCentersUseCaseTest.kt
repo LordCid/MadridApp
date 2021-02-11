@@ -2,7 +2,7 @@ package com.albertcid.madridapp.domain.usecase
 
 import com.albertcid.madridapp.data.Repository
 import com.albertcid.madridapp.domain.model.Center
-import com.albertcid.madridapp.getCenter
+import com.albertcid.madridapp.getElderlyCenter
 import com.nhaarman.mockitokotlin2.given
 import com.nhaarman.mockitokotlin2.mock
 import io.reactivex.Observable
@@ -22,7 +22,7 @@ class GetElderlyCentersUseCaseTest {
 
     @Test
     fun `Should return observable from datasource`() {
-        val expected = Observable.just(listOf(getCenter(123)))
+        val expected = Observable.just(listOf(getElderlyCenter(123)))
         givenObservableFromRepository(expected)
 
         val actual = sut.invoke()

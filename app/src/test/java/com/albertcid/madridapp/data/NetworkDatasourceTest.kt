@@ -1,12 +1,9 @@
 package com.albertcid.madridapp.data
 
+import com.albertcid.madridapp.*
 import com.albertcid.madridapp.data.model.NetworkDataWrapper
 import com.albertcid.madridapp.data.model.NetworkCenterModel
 import com.albertcid.madridapp.domain.model.Center
-import com.albertcid.madridapp.getCenter
-import com.albertcid.madridapp.getNetworkCenterModel
-import com.albertcid.madridapp.getOtherCenter
-import com.albertcid.madridapp.getOtherNetworkCenterModel
 import com.nhaarman.mockitokotlin2.given
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
@@ -34,7 +31,7 @@ class NetworkDatasourceTest {
 
     @Test
     fun `Given success response when get Elderly Center should return results`() {
-        val expected = listOf(getCenter(firtCenterId), getCenter(secondCenterId))
+        val expected = listOf(getElderlyCenter(firtCenterId), getElderlyCenter(secondCenterId))
         val networkList = listOf(
             getNetworkCenterModel(firtCenterId),
             getNetworkCenterModel(secondCenterId)
@@ -51,7 +48,7 @@ class NetworkDatasourceTest {
     @Test
     fun `Given OTHER success response when get Elderly Center should return results`() {
         val expected =
-            listOf(getOtherCenter(firtCenterId), getOtherCenter(secondCenterId))
+            listOf(getOtherElderlyCenter(firtCenterId), getOtherElderlyCenter(secondCenterId))
         val networkList = listOf(
             getOtherNetworkCenterModel(firtCenterId),
             getOtherNetworkCenterModel(secondCenterId)
@@ -79,7 +76,7 @@ class NetworkDatasourceTest {
 
     @Test
     fun `Given success response when get Family Centers should return results`() {
-        val expected = listOf(getCenter(firtCenterId), getCenter(secondCenterId))
+        val expected = listOf(getFamilyCenter(firtCenterId), getFamilyCenter(secondCenterId))
         val networkList = listOf(
             getNetworkCenterModel(firtCenterId),
             getNetworkCenterModel(secondCenterId)
@@ -96,7 +93,7 @@ class NetworkDatasourceTest {
     @Test
     fun `Given OTHER success response when get Family Centers  should return results`() {
         val expected =
-            listOf(getOtherCenter(firtCenterId), getOtherCenter(secondCenterId))
+            listOf(getOtherFamilyCenter(firtCenterId), getOtherFamilyCenter(secondCenterId))
         val networkList = listOf(
             getOtherNetworkCenterModel(firtCenterId),
             getOtherNetworkCenterModel(secondCenterId)

@@ -10,6 +10,7 @@ interface CentersListContract {
     }
 
     interface Presenter: BaseContract.Presenter{
+        fun getAllCenters()
         fun getElderlyCenters()
         fun getFamilyCenters()
     }

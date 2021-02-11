@@ -4,6 +4,7 @@ import com.albertcid.madridapp.domain.SchedulerProvider
 import com.albertcid.madridapp.domain.model.Center
 import com.albertcid.madridapp.domain.usecase.GetElderlyCentersUseCase
 import com.albertcid.madridapp.domain.usecase.GetFamilyCentersUseCase
+import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
@@ -16,21 +17,33 @@ class CenterListPresenter @Inject constructor(
 ) : CentersListContract.Presenter {
 
     private val compositeDisposable = CompositeDisposable()
+    private var centerList = emptyList<Center>()
 
-    override fun getElderlyCenters() {
-        val disposable = getElderlyCentersUseCase()
-            .subscribeOn(schedulerProvider.io())
-            .observeOn(schedulerProvider.ui())
+    init{
+        val disposable = Observable.concat(getElderlyCentersUseCase(), getFamilyCentersUseCase())
             .subscribe(::onSucess, ::onError)
         compositeDisposable.add(disposable)
     }
 
+    override fun getAllCenters() {
+        view?.showCenters(centerList)
+    }
+
+
+    override fun getElderlyCenters() {
+        view?.showCenters(centerList)
+//        val disposable = getElderlyCentersUseCase()
+//            .compose(applyObservableAsync())
+//            .subscribe(::onSucess, ::onError)
+//        compositeDisposable.add(disposable)
+    }
+
     override fun getFamilyCenters() {
-        val disposable = getFamilyCentersUseCase()
-            .subscribeOn(schedulerProvider.io())
-            .observeOn(schedulerProvider.ui())
-            .subscribe(::onSucess, ::onError)
-        compositeDisposable.add(disposable)
+        view?.showCenters(centerList)
+//        val disposable = getFamilyCentersUseCase()
+//            .compose(applyObservableAsync())
+//            .subscribe(::onSucess, ::onError)
+//        compositeDisposable.add(disposable)
     }
 
     private fun <T> applyObservableAsync(): ObservableTransformer<T, T> {
@@ -41,9 +54,8 @@ class CenterListPresenter @Inject constructor(
         }
     }
 
-
     private fun onSucess(list: List<Center>) {
-        view?.showCenters(list)
+        centerList = list
     }
 
     private fun onError(throwable: Throwable) {
