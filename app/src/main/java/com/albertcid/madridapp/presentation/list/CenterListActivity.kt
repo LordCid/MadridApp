@@ -34,7 +34,7 @@ class CenterListActivity : AppCompatActivity(), CentersListContract.View, Corout
         setSupportActionBar(findViewById(R.id.toolbar))
         setUpUI()
         setTabListener()
-        presenter.getElderlyCenters()
+        presenter.getAllCenters()
     }
 
     private fun setUpUI(){
@@ -69,17 +69,18 @@ class CenterListActivity : AppCompatActivity(), CentersListContract.View, Corout
         })
     }
 
-    override fun showCenters(list: List<Center>) {
+    override fun showLoading() {
+        progressDialog.show()
+        tabs.isEnabled = false
+    }
+
+    override fun showCenters(centers: List<Center>) {
         progressDialog.dismiss()
-        centerListAdapter.list = list
+        tabs.isEnabled = true
+        centerListAdapter.list = centers
         listView.visibility = View.VISIBLE
         no_results_tv.visibility = View.GONE
     }
 
-    override fun showError() {
-        progressDialog.dismiss()
-        listView.visibility = View.GONE
-        no_results_tv.visibility = View.VISIBLE
-    }
 
 }

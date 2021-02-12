@@ -8,10 +8,7 @@ import com.albertcid.madridapp.getElderlyCenter
 import com.albertcid.madridapp.getFamilyCenter
 import com.albertcid.madridapp.getOtherElderlyCenter
 import com.albertcid.madridapp.getOtherFamilyCenter
-import com.nhaarman.mockitokotlin2.given
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.never
-import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.*
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import org.junit.Before
@@ -25,9 +22,7 @@ class CenterListPresenterTest {
     private val schedulerProvider = mock<SchedulerProvider>()
 
     private val elderlyCenters = listOf(getElderlyCenter(123))
-    private val otherElderlyCenters = listOf(getOtherElderlyCenter(123))
     private val familyCenters = listOf(getFamilyCenter(123))
-    private val otherFamilyCenters = listOf(getOtherFamilyCenter(123))
 
     @Before
     fun setUp() {
@@ -84,7 +79,7 @@ class CenterListPresenterTest {
 
         sut.getAllCenters()
 
-        verify(view).showCenters(expected)
+        verify(view, atLeastOnce()).showCenters(expected)
     }
 
     @Test
@@ -99,7 +94,7 @@ class CenterListPresenterTest {
 
         sut.getAllCenters()
 
-        verify(view).showCenters(expected)
+        verify(view, atLeastOnce()).showCenters(expected)
     }
 
     @Test
@@ -110,7 +105,7 @@ class CenterListPresenterTest {
 
         sut.getFamilyCenters()
 
-        verify(view).showCenters(familyCenters)
+        verify(view, atLeastOnce()).showCenters(familyCenters)
     }
 
 
@@ -122,31 +117,10 @@ class CenterListPresenterTest {
 
         sut.getElderlyCenters()
 
-        verify(view).showCenters(elderlyCenters)
-    }
-
-    @Test
-    fun `Given failure get elderly center list, error is invoked in view`() {
-        givenErrorWhenGetElderlyCenter(familyCenters)
-        initSut()
-
-        sut.getElderlyCenters()
-
-        verify(view).showCenters(familyCenters)
-        verify(view, never()).showError()
+        verify(view, atLeastOnce()).showCenters(elderlyCenters)
     }
 
 
-    @Test
-    fun `Given failure get family center list, error is invoked in view`() {
-        givenErrorWhenGetFamilyCenter(elderlyCenters)
-        initSut()
-
-        sut.getFamilyCenters()
-
-        verify(view).showCenters(elderlyCenters)
-        verify(view, never()).showError()
-    }
 
     private fun initSut() {
         sut = CenterListPresenter(
@@ -166,15 +140,6 @@ class CenterListPresenterTest {
         given(getFamilyCentersUseCase.invoke()).willReturn(Observable.just(familyCenters))
     }
 
-    private fun givenErrorWhenGetElderlyCenter(familyCenters: List<Center>) {
-        given(getElderlyCentersUseCase.invoke()).willReturn(Observable.error(Throwable()))
-        given(getFamilyCentersUseCase.invoke()).willReturn(Observable.just(familyCenters))
-    }
-
-    private fun givenErrorWhenGetFamilyCenter(elderlyCenters: List<Center>) {
-        given(getElderlyCentersUseCase.invoke()).willReturn(Observable.just(elderlyCenters))
-        given(getFamilyCentersUseCase.invoke()).willReturn(Observable.error(Throwable()))
-    }
 
     private fun stubScheduleProvider(){
         given(schedulerProvider.io()).willReturn(Schedulers.trampoline())

@@ -22,9 +22,8 @@ class CenterListPresenter @Inject constructor(
 
     init{
         val disposable = Observable.concat(getElderlyCentersUseCase(), getFamilyCentersUseCase())
-            .subscribeOn(schedulerProvider.io())
-            .observeOn(schedulerProvider.ui())
-            .subscribe(::onSucess, ::onError)
+            .compose(applyObservableAsync())
+            .subscribe(::onSucess)
         compositeDisposable.add(disposable)
     }
 
@@ -50,12 +49,11 @@ class CenterListPresenter @Inject constructor(
     }
 
     private fun onSucess(list: List<Center>) {
+        view?.showCenters(list)
         centerList.addAll(list)
     }
 
-    private fun onError(throwable: Throwable) {
-        view?.showError()
-    }
+    
 
     override fun onDestroy() {
         compositeDisposable.clear()
