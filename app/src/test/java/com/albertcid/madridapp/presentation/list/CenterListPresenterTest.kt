@@ -6,10 +6,9 @@ import com.albertcid.madridapp.domain.usecase.GetElderlyCentersUseCase
 import com.albertcid.madridapp.domain.usecase.GetFamilyCentersUseCase
 import com.albertcid.madridapp.getElderlyCenter
 import com.albertcid.madridapp.getFamilyCenter
-import com.albertcid.madridapp.getOtherElderlyCenter
-import com.albertcid.madridapp.getOtherFamilyCenter
 import com.nhaarman.mockitokotlin2.*
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import org.junit.Before
 import org.junit.Test
@@ -136,8 +135,8 @@ class CenterListPresenterTest {
         elderlyCenters: List<Center>,
         familyCenters: List<Center>
     ) {
-        given(getElderlyCentersUseCase.invoke()).willReturn(Observable.just(elderlyCenters))
-        given(getFamilyCentersUseCase.invoke()).willReturn(Observable.just(familyCenters))
+        given(getElderlyCentersUseCase.invoke()).willReturn(Single.just(elderlyCenters))
+        given(getFamilyCentersUseCase.invoke()).willReturn(Single.just(familyCenters))
     }
 
 

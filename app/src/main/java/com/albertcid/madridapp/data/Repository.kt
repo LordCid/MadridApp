@@ -1,9 +1,9 @@
 package com.albertcid.madridapp.data
 
 import com.albertcid.madridapp.domain.model.Center
-import io.reactivex.Observable
+import io.reactivex.Single
 
 interface Repository {
-    fun getElderlyCenters(): Observable<List<Center>>
-    fun getFamilyCenters(): Observable<List<Center>>
+    fun getElderlyCenters(): Single<List<Center>>
+    fun getFamilyCenters(): Single<List<Center>>
 }

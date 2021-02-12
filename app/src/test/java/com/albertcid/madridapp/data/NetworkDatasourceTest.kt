@@ -8,6 +8,7 @@ import com.nhaarman.mockitokotlin2.given
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.observers.TestObserver
 import junit.framework.Assert.assertEquals
 import org.junit.Before
@@ -119,8 +120,8 @@ class NetworkDatasourceTest {
     }
 
     private fun givenApiServiceSuccessResponseGetElderlyCenters(list: List<NetworkCenterModel>) {
-        val observable = Observable.just(getNetworkDataWrapper(list))
-        given(apiService.getElderlyCenter()).willReturn(observable)
+        val single = Single.just(getNetworkDataWrapper(list))
+        given(apiService.getElderlyCenter()).willReturn(single)
     }
 
     private fun getNetworkDataWrapper(
@@ -130,18 +131,18 @@ class NetworkDatasourceTest {
     )
 
     private fun givenApiServiceFailedResponseGetElderlyCenters(exception: Exception) {
-        val observable = Observable.error<NetworkDataWrapper>(exception)
-        given(apiService.getElderlyCenter()).willReturn(observable)
+        val single = Single.error<NetworkDataWrapper>(exception)
+        given(apiService.getElderlyCenter()).willReturn(single)
     }
 
     private fun givenApiServiceSuccessResponseGetFamilyCenters(list: List<NetworkCenterModel>) {
-        val observable = Observable.just(getNetworkDataWrapper(list))
-        given(apiService.getFamiliyCenter()).willReturn(observable)
+        val single = Single.just(getNetworkDataWrapper(list))
+        given(apiService.getFamiliyCenter()).willReturn(single)
     }
 
     private fun givenApiServiceFailedResponseGetFamilyCenters(exception: Exception) {
-        val observable = Observable.error<NetworkDataWrapper>(exception)
-        given(apiService.getFamiliyCenter()).willReturn(observable)
+        val single = Single.error<NetworkDataWrapper>(exception)
+        given(apiService.getFamiliyCenter()).willReturn(single)
     }
 
 

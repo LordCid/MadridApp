@@ -7,6 +7,8 @@ import com.albertcid.madridapp.domain.usecase.GetElderlyCentersUseCase
 import com.albertcid.madridapp.domain.usecase.GetFamilyCentersUseCase
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
+import io.reactivex.Single
+import io.reactivex.SingleTransformer
 import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
@@ -21,8 +23,9 @@ class CenterListPresenter @Inject constructor(
     private var centerList = mutableListOf<Center>()
 
     init{
-        val disposable = Observable.concat(getElderlyCentersUseCase(), getFamilyCentersUseCase())
-            .compose(applyObservableAsync())
+        val disposable = Single.concat(getElderlyCentersUseCase(), getFamilyCentersUseCase())
+            .subscribeOn(schedulerProvider.io())
+            .observeOn(schedulerProvider.ui())
             .subscribe(::onSucess)
         compositeDisposable.add(disposable)
     }
@@ -40,20 +43,13 @@ class CenterListPresenter @Inject constructor(
         view?.showCenters(centerList.filter { it.category == CenterCategory.FAMILY })
     }
 
-    private fun <T> applyObservableAsync(): ObservableTransformer<T, T> {
-        return ObservableTransformer { observable ->
-            observable
-                .subscribeOn(schedulerProvider.io())
-                .observeOn(schedulerProvider.ui())
-        }
-    }
 
     private fun onSucess(list: List<Center>) {
         view?.showCenters(list)
         centerList.addAll(list)
     }
 
-    
+
 
     override fun onDestroy() {
         compositeDisposable.clear()

@@ -6,6 +6,7 @@ import com.albertcid.madridapp.getElderlyCenter
 import com.nhaarman.mockitokotlin2.given
 import com.nhaarman.mockitokotlin2.mock
 import io.reactivex.Observable
+import io.reactivex.Single
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
@@ -22,7 +23,7 @@ class GetElderlyCentersUseCaseTest {
 
     @Test
     fun `Should return observable from datasource`() {
-        val expected = Observable.just(listOf(getElderlyCenter(123)))
+        val expected = Single.just(listOf(getElderlyCenter(123)))
         givenObservableFromRepository(expected)
 
         val actual = sut.invoke()
@@ -30,7 +31,7 @@ class GetElderlyCentersUseCaseTest {
         assertEquals(expected, actual)
     }
 
-    private fun givenObservableFromRepository(observable: Observable<List<Center>>) {
-        given(repository.getElderlyCenters()).willReturn(observable)
+    private fun givenObservableFromRepository(single: Single<List<Center>>) {
+        given(repository.getElderlyCenters()).willReturn(single)
     }
 }

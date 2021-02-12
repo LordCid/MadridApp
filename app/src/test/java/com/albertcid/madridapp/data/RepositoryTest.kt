@@ -6,6 +6,7 @@ import com.albertcid.madridapp.getFamilyCenter
 import com.nhaarman.mockitokotlin2.given
 import com.nhaarman.mockitokotlin2.mock
 import io.reactivex.Observable
+import io.reactivex.Single
 import org.junit.Before
 
 import org.junit.Assert.*
@@ -23,7 +24,7 @@ class RepositoryTest {
 
     @Test
     fun `When get Eldery Centers Should return observable from datasource`() {
-        val expected = Observable.just(listOf(getElderlyCenter(123)))
+        val expected = Single.just(listOf(getElderlyCenter(123)))
         givenObservableFromDataSourceGetFamilyCenters(expected)
 
         val actual = sut.getFamilyCenters()
@@ -33,7 +34,7 @@ class RepositoryTest {
 
     @Test
     fun `When get Family Centers Should return observable from datasource`() {
-        val expected = Observable.just(listOf(getFamilyCenter(123)))
+        val expected = Single.just(listOf(getFamilyCenter(123)))
         givenObservableFromDataSourceGetElderlyCenters(expected)
 
         val actual = sut.getElderlyCenters()
@@ -41,12 +42,12 @@ class RepositoryTest {
         assertEquals(expected, actual)
     }
 
-    private fun givenObservableFromDataSourceGetElderlyCenters(observable: Observable<List<Center>>) {
-        given(networkDatasource.getElderlyCenters()).willReturn(observable)
+    private fun givenObservableFromDataSourceGetElderlyCenters(single: Single<List<Center>>) {
+        given(networkDatasource.getElderlyCenters()).willReturn(single)
     }
 
-    private fun givenObservableFromDataSourceGetFamilyCenters(observable: Observable<List<Center>>) {
-        given(networkDatasource.getFamilyCenters()).willReturn(observable)
+    private fun givenObservableFromDataSourceGetFamilyCenters(single: Single<List<Center>>) {
+        given(networkDatasource.getFamilyCenters()).willReturn(single)
     }
 
 }

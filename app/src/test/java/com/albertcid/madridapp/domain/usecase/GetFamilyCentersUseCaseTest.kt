@@ -5,7 +5,7 @@ import com.albertcid.madridapp.domain.model.Center
 import com.albertcid.madridapp.getFamilyCenter
 import com.nhaarman.mockitokotlin2.given
 import com.nhaarman.mockitokotlin2.mock
-import io.reactivex.Observable
+import io.reactivex.Single
 import org.junit.Before
 
 import org.junit.Assert.*
@@ -23,7 +23,7 @@ class GetFamilyCentersUseCaseTest {
 
     @Test
     fun `Should return observable from datasource`() {
-        val expected = Observable.just(listOf(getFamilyCenter(123)))
+        val expected = Single.just(listOf(getFamilyCenter(123)))
         givenObservableFromRepository(expected)
 
         val actual = sut.invoke()
@@ -31,7 +31,7 @@ class GetFamilyCentersUseCaseTest {
         assertEquals(expected, actual)
     }
 
-    private fun givenObservableFromRepository(observable: Observable<List<Center>>) {
-        given(repository.getFamilyCenters()).willReturn(observable)
+    private fun givenObservableFromRepository(single: Single<List<Center>>) {
+        given(repository.getFamilyCenters()).willReturn(single)
     }
 }
